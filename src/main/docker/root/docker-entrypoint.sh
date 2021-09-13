@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [[ ! -d "$PGDATA" ]]
+then
+  mkdir -p "$PGDATA"
+fi
+
+if [[ $(stat -c %U "$PGDATA") != 'postgres' ]]
+then
+  chown -R postgres:postgres "$PGDATA"
+fi
+
+if [[ $(stat -c %a "$PGDATA") != '700' ]]
+then
+  chmod 700 "$PGDATA"
+fi
+
+mkdir --parents /root/.config/patroni
+ln -s /config/patronictl.yaml /root/.config/patroni/patronictl.yaml
+
+/usr/bin/timescaledb-tune --quiet --yes --conf-path=$PGDATA --dry-run
+
+exec gosu postgres /patroni.py /config/patroni
