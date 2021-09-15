@@ -1,0 +1,100 @@
+plugins {
+    id 'eu.xenit.docker' version '5.3.0' apply false
+}
+
+def patroni_version = '2.1.1'
+def junit_version = "5.7.1"
+def timescaledb_version = "2.4.1"
+def rust_version = "1.54.0"
+def promscale_ext_version = "0.2.0"
+
+project(':13') {
+    project.ext {
+        pg_major_version = '13'
+        pg_version = '13.4'
+    }
+}
+
+subprojects {
+
+    project.projectDir.mkdir()
+
+    apply plugin: 'eu.xenit.docker'
+    apply plugin: 'eu.xenit.docker-compose'
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
+        testImplementation "org.postgresql:postgresql:42.2.19"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
+        testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junit_version}"
+    }
+
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+
+    task copyDocker(type: Copy) {
+        from file("$project.parent.projectDir/src/main/docker")
+        into "$project.buildDir/docker"
+    }
+
+    buildDockerImage.dependsOn(copyDocker)
+
+    dockerBuild {
+        dockerFile = file("$copyDocker.destinationDir/Dockerfile")
+        repositories = ['xenit/timescaledb']
+        tags = ["${project.pg_version}-timescaledb-${timescaledb_version}"]
+    }
+    
+    buildDockerImage {
+        pull = false
+        buildArgs = [
+          'PG_MAJOR_VERSION': project.pg_major_version,
+          'RUST_VERSION': rust_version,
+          'PROMSCALE_EXT_VERSION': promscale_ext_version,
+          'BASEIMAGE': "xenit/postgres-patroni:${project.pg_version}-patroni-${patroni_version}"
+        ]
+    }
+
+    docker {
+        if (System.getenv("DOCKER_USER") != null) {
+            registryCredentials {
+                username = System.getenv("DOCKER_USER")
+                password = System.getenv("DOCKER_PASSWORD")
+            }
+        } else {
+            logger.info "using default credentials"
+        }
+    }
+
+    dockerCompose {
+        useComposeFiles = ["$project.parent.projectDir/src/main/compose/docker-compose.yml"]
+    }
+
+    sourceSets {
+        test {
+            java {
+                srcDirs "$project.parent.projectDir/src/test/java"
+            }
+        }
+    }
+
+    test {
+        dependsOn composeUp
+        useJUnitPlatform()
+        outputs.upToDateWhen { false }
+        doFirst {
+            def ipAddress = project.dockerCompose.servicesInfos.postgresqlalpha.getFirstContainer().getHost()
+            def port = project.dockerCompose.servicesInfos.postgresqlalpha.getFirstContainer().getPorts().getAt(5432)
+            systemProperty("connectionString", "jdbc:postgresql://${ipAddress}:${port}/postgres")
+            systemProperty("postgres.username", "postgres")
+            systemProperty("postgres.password", "postgres")
+        }
+        finalizedBy(composeDown)
+    }
+
+}
