@@ -45,13 +45,16 @@ ENV RUSTUP_HOME=/usr/local/rustup \
 
 RUN set -eux; \
     rustArch='x86_64-unknown-linux-gnu'; \
-    rustupSha256='3dc5ef50861ee18657f9db2eeb7392f9c2a6c95c90ab41e45ab4ca71476b4338' ; \
-    url="https://static.rust-lang.org/rustup/archive/1.24.3/x86_64-unknown-linux-gnu/rustup-init"; \
-    wget "$url"; \
-    echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
-    chmod +x rustup-init; \
-    ./rustup-init -y --no-modify-path --profile minimal  --component rustfmt --default-toolchain $RUST_VERSION --default-host ${rustArch}; \
-    rm rustup-init; \
+
+    url="https://static.rust-lang.org/rustup/dist/${rustArch}/rustup-init"; \
+    # sha256 file is using below path \
+    mkdir -p target/${rustArch}/release/; \
+    wget "$url" -x -O target/${rustArch}/release/rustup-init; \
+    wget "${url}.sha256" -O target/${rustArch}/release/rustup-init.sha256; \
+    sha256sum -c target/${rustArch}/release/rustup-init.sha256; \
+    chmod +x target/${rustArch}/release/rustup-init; \
+    target/${rustArch}/release/rustup-init -y --no-modify-path --profile minimal  --component rustfmt --default-toolchain $RUST_VERSION --default-host ${rustArch}; \
+    rm -rf target; \
     chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
     cat /usr/local/cargo/env; \
     rustup --version; \
