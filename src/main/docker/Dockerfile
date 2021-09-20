@@ -82,6 +82,9 @@ RUN set -ex \
 
 FROM $BASEIMAGE
 
+ARG TIMESCALEDB_VERSION
+ARG PG_MAJOR_VERSION
+
 # copy promscale_extension
 COPY --from=builder /build/promscale /build/promscale
 
@@ -97,7 +100,7 @@ RUN set -ex \
     && echo "deb https://packagecloud.io/timescale/timescaledb/debian/ $(lsb_release -c -s) main" > /etc/apt/sources.list.d/timescaledb.list \
     && curl -L https://packagecloud.io/timescale/timescaledb/gpgkey | apt-key add - \
     && apt-get update \
-    && apt-get install -y timescaledb-2-2.4.1-postgresql-13 \
+    && apt-get install -y timescaledb-2-$TIMESCALEDB_VERSION-postgresql-$PG_MAJOR_VERSION \
     && make -C /build/promscale install \
     && apt-get remove -y \
       g++ \

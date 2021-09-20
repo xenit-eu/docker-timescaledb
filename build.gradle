@@ -54,6 +54,7 @@ subprojects {
         pull = false
         buildArgs = [
           'PG_MAJOR_VERSION': project.pg_major_version,
+          'TIMESCALEDB_VERSION' :timescaledb_version,
           'RUST_VERSION': rust_version,
           'PROMSCALE_EXT_VERSION': promscale_ext_version,
           'BASEIMAGE': "xenit/postgres-patroni:${project.pg_version}-patroni-${patroni_version}"
