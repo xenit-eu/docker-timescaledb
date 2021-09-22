@@ -4,7 +4,7 @@ plugins {
 
 def patroni_version = '2.1.1'
 def junit_version = "5.7.1"
-def timescaledb_version = "2.4.1"
+def timescaledb_version = "2.4.2"
 def rust_version = "1.54.0"
 def promscale_ext_version = "0.2.0"
 
