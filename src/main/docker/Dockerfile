@@ -85,6 +85,8 @@ FROM $BASEIMAGE
 ARG TIMESCALEDB_VERSION
 ARG PG_MAJOR_VERSION
 
+ENV TIMESCALEDB_VERSION=$TIMESCALEDB_VERSION
+
 # copy promscale_extension
 COPY --from=builder /build/promscale /build/promscale
 
@@ -103,7 +105,6 @@ RUN set -ex \
     && apt-get install -y timescaledb-2-$TIMESCALEDB_VERSION-postgresql-$PG_MAJOR_VERSION \
     && make -C /build/promscale install \
     && apt-get remove -y \
-      g++ \
       curl \
       gnupg \
       apt-transport-https \
