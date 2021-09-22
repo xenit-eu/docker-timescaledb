@@ -1,0 +1,47 @@
+version: '2.2'
+
+services:
+  postgresqlalpha:
+    image: ${DOCKER_IMAGE}
+    volumes:
+    - postgres-alpha_data:/var/lib/postgresql/data
+    ports:
+    - 0.0.0.0::5432
+    - 0.0.0.0::8008
+    environment:
+    - PGDATA=/var/lib/postgresql/data/PGDATA
+    - PATRONI_NAME=postgresqlalpha
+    - PATRONI_SCOPE=alfdb
+    - PATRONI_POSTGRESQL_CONNECT_ADDRESS=postgresqlalpha:5432
+    - PATRONI_RESTAPI_CONNECT_ADDRESS=postgresqlalpha:8008
+
+  postgresqlbravo:
+    image: ${DOCKER_IMAGE}
+    volumes:
+    - postgres-bravo_data:/var/lib/postgresql/data
+    ports:
+    - 0.0.0.0::5432
+    - 0.0.0.0::8008
+    environment:
+    - PGDATA=/var/lib/postgresql/data/PGDATA
+    - PATRONI_NAME=postgresqlbravo
+    - PATRONI_SCOPE=alfdb
+    - PATRONI_POSTGRESQL_CONNECT_ADDRESS=postgresqlbravo:5432
+    - PATRONI_RESTAPI_CONNECT_ADDRESS=postgresqlbravo:8008
+
+  haproxy:
+    image: haproxy:2.0.5
+    volumes:
+    - ./config/haproxy:/usr/local/etc/haproxy
+    ports:
+    - 5000:5000
+
+  consul:
+    image: consul:1.5.3
+    ports:
+    - 0.0.0.0::8500
+    command: agent -data-dir /consul/data -server -bootstrap -ui -client 0.0.0.0
+
+volumes:
+  postgres-alpha_data:
+  postgres-bravo_data:
