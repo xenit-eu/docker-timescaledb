@@ -51,7 +51,6 @@ subprojects {
     }
     
     buildDockerImage {
-        pull = false
         buildArgs = [
           'PG_MAJOR_VERSION': project.pg_major_version,
           'TIMESCALEDB_VERSION' :timescaledb_version,
