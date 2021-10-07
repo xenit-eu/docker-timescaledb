@@ -99,6 +99,7 @@ RUN set -ex \
       lsb-release \
       make \
       llvm \
+      procps \
     && echo "deb https://packagecloud.io/timescale/timescaledb/debian/ $(lsb_release -c -s) main" > /etc/apt/sources.list.d/timescaledb.list \
     && curl -L https://packagecloud.io/timescale/timescaledb/gpgkey | apt-key add - \
     && apt-get update \

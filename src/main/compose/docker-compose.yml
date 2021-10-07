@@ -8,6 +8,8 @@ services:
     ports:
     - 0.0.0.0::5432
     - 0.0.0.0::8008
+    depends_on:
+    - consul
     environment:
     - PGDATA=/var/lib/postgresql/data/PGDATA
     - PATRONI_NAME=postgresqlalpha
@@ -22,6 +24,8 @@ services:
     ports:
     - 0.0.0.0::5432
     - 0.0.0.0::8008
+    depends_on:
+    - consul
     environment:
     - PGDATA=/var/lib/postgresql/data/PGDATA
     - PATRONI_NAME=postgresqlbravo
