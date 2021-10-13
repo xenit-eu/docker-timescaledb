@@ -92,7 +92,7 @@ subprojects {
         doFirst {
             def ipAddress = project.dockerCompose.servicesInfos.postgresqlalpha.getFirstContainer().getHost()
             def port = project.dockerCompose.servicesInfos.postgresqlalpha.getFirstContainer().getPorts().getAt(5432)
-            systemProperty("connectionString", "jdbc:postgresql://${ipAddress}:${port}/postgres")
+            systemProperty("connectionString", "jdbc:postgresql://${ipAddress}:${port}/promscale")
             systemProperty("postgres.username", "postgres")
             systemProperty("postgres.password", "postgres")
         }
