@@ -6,6 +6,7 @@ def patroni_version = '2.1.1'
 def junit_version = "5.7.1"
 def timescaledb_version = "2.4.2"
 def rust_version = "1.54.0"
+def promscale_version = "0.6.2"
 def promscale_ext_version = "0.2.0"
 
 project(':13') {
@@ -56,6 +57,7 @@ subprojects {
           'TIMESCALEDB_VERSION' :timescaledb_version,
           'RUST_VERSION': rust_version,
           'PROMSCALE_EXT_VERSION': promscale_ext_version,
+          'PROMSCALE_VERSION': promscale_version,
           'BASEIMAGE': "xenit/postgres-patroni:${project.pg_version}-patroni-${patroni_version}"
         ]
     }
