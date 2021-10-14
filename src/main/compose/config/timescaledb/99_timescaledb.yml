@@ -1,0 +1,6 @@
+postgresql:
+  pg_hba:
+    - host replication replicator 0.0.0.0/0 md5
+    - host all postgres 0.0.0.0/0 md5
+    - host promscale promadmin 0.0.0.0/0 md5
+

@@ -45,7 +45,6 @@ ENV RUSTUP_HOME=/usr/local/rustup \
 
 RUN set -eux; \
     rustArch='x86_64-unknown-linux-gnu'; \
-
     url="https://static.rust-lang.org/rustup/dist/${rustArch}/rustup-init"; \
     # sha256 file is using below path \
     mkdir -p target/${rustArch}/release/; \
@@ -84,6 +83,7 @@ FROM $BASEIMAGE
 
 ARG TIMESCALEDB_VERSION
 ARG PG_MAJOR_VERSION
+ARG PROMSCALE_VERSION
 
 ENV TIMESCALEDB_VERSION=$TIMESCALEDB_VERSION
 
@@ -105,6 +105,8 @@ RUN set -ex \
     && apt-get update \
     && apt-get install -y timescaledb-2-$TIMESCALEDB_VERSION-postgresql-$PG_MAJOR_VERSION \
     && make -C /build/promscale install \
+    && curl -L -o /usr/bin/promscale https://github.com/timescale/promscale/releases/download/$PROMSCALE_VERSION/promscale_${PROMSCALE_VERSION}_Linux_x86_64 \
+    && chmod +x /usr/bin/promscale \
     && apt-get remove -y \
       curl \
       gnupg \

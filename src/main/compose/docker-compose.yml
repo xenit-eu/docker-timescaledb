@@ -5,6 +5,7 @@ services:
     image: ${DOCKER_IMAGE}
     volumes:
     - postgres-alpha_data:/var/lib/postgresql/data
+    - ./config/timescaledb/99_timescaledb.yml:/config/patroni/99_timescaledb.yml
     ports:
     - 0.0.0.0::5432
     - 0.0.0.0::8008
@@ -16,11 +17,19 @@ services:
     - PATRONI_SCOPE=alfdb
     - PATRONI_POSTGRESQL_CONNECT_ADDRESS=postgresqlalpha:5432
     - PATRONI_RESTAPI_CONNECT_ADDRESS=postgresqlalpha:8008
+    - PATRONI_SUPERUSER_USERNAME=postgres
+    - PATRONI_SUPERUSER_PASSWORD=postgres
+    - DB_NAME=promscale
+    - DB_ADMIN=promadmin
+    - DB_PW=prompw
+    - PROMSCALE_INIT=true
+    - PROMSCALE_DEFAULT_CHUNK_INTERVAL=2 hours
 
   postgresqlbravo:
     image: ${DOCKER_IMAGE}
     volumes:
     - postgres-bravo_data:/var/lib/postgresql/data
+    - ./config/timescaledb/99_timescaledb.yml:/config/patroni/99_timescaledb.yml
     ports:
     - 0.0.0.0::5432
     - 0.0.0.0::8008
@@ -32,13 +41,13 @@ services:
     - PATRONI_SCOPE=alfdb
     - PATRONI_POSTGRESQL_CONNECT_ADDRESS=postgresqlbravo:5432
     - PATRONI_RESTAPI_CONNECT_ADDRESS=postgresqlbravo:8008
-
-  haproxy:
-    image: haproxy:2.0.5
-    volumes:
-    - ./config/haproxy:/usr/local/etc/haproxy
-    ports:
-    - 5000:5000
+    - PATRONI_SUPERUSER_USERNAME=postgres
+    - PATRONI_SUPERUSER_PASSWORD=postgres
+    - DB_NAME=promscale
+    - DB_ADMIN=promadmin
+    - DB_PW=prompw
+    - PROMSCALE_INIT=true
+    - PROMSCALE_DEFAULT_CHUNK_INTERVAL=2 hours
 
   consul:
     image: consul:1.5.3
