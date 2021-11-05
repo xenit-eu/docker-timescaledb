@@ -103,7 +103,7 @@ RUN set -ex \
     && echo "deb https://packagecloud.io/timescale/timescaledb/debian/ $(lsb_release -c -s) main" > /etc/apt/sources.list.d/timescaledb.list \
     && curl -L https://packagecloud.io/timescale/timescaledb/gpgkey | apt-key add - \
     && apt-get update \
-    && apt-get install -y timescaledb-2-$TIMESCALEDB_VERSION-postgresql-$PG_MAJOR_VERSION \
+    && apt-get install -y timescaledb-2-$TIMESCALEDB_VERSION-postgresql-$PG_MAJOR_VERSION timescaledb-toolkit-postgresql-${PG_MAJOR_VERSION} \
     && make -C /build/promscale install \
     && curl -L -o /usr/bin/promscale https://github.com/timescale/promscale/releases/download/$PROMSCALE_VERSION/promscale_${PROMSCALE_VERSION}_Linux_x86_64 \
     && chmod +x /usr/bin/promscale \
