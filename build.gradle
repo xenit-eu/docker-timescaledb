@@ -54,7 +54,7 @@ subprojects {
     buildDockerImage {
         buildArgs = [
           'PG_MAJOR_VERSION': project.pg_major_version,
-          'TIMESCALEDB_VERSION' :timescaledb_version,
+          'TIMESCALEDB_VERSION': timescaledb_version,
           'RUST_VERSION': rust_version,
           'PROMSCALE_EXT_VERSION': promscale_ext_version,
           'PROMSCALE_VERSION': promscale_version,
