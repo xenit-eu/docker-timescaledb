@@ -7,6 +7,9 @@ if [[ -v DB_NAME ]]; then
   echo "psql -h localhost -U postgres -d $DB_NAME -c \"CREATE EXTENSION IF NOT EXISTS timescaledb WITH VERSION '$TIMESCALEDB_VERSION' CASCADE;\""
   psql -h localhost -U postgres -d $DB_NAME -c "CREATE EXTENSION IF NOT EXISTS timescaledb WITH VERSION '$TIMESCALEDB_VERSION' CASCADE;"
 
+  echo "psql -h localhost -U postgres -d $DB_NAME -c \"CREATE EXTENSION IF NOT EXISTS timescaledb_toolkit;\""
+  psql -h localhost -U postgres -d $DB_NAME -c "CREATE EXTENSION IF NOT EXISTS timescaledb_toolkit;"
+
 else
   echo "psql \"$@\" -c \"CREATE EXTENSION IF NOT EXISTS timescaledb WITH VERSION '$TIMESCALEDB_VERSION' CASCADE;\""
   psql "$@" -c "CREATE EXTENSION IF NOT EXISTS timescaledb WITH VERSION '$TIMESCALEDB_VERSION' CASCADE;"
